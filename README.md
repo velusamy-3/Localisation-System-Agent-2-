@@ -6,6 +6,8 @@ An AI-powered automation system that reconstructs modern websites (React/Next.js
 
 ## 🚀 Overview
 
+This project demonstrates a scalable approach to website reconstruction and AI-driven localisation.
+
 This system automates the complete process of:
 
 * Cloning a live website without source code access
