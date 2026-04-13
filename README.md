@@ -6,14 +6,14 @@ An AI-powered automation system that reconstructs modern websites (React/Next.js
 
 ## 🚀 Overview
 
-This project is designed to fully automate the process of:
+This system automates the complete process of:
 
 * Cloning a live website without source code access
-* Converting it into a static, deployable version
+* Converting it into a fully static version
 * Rewriting all visible content for a target market
-* Producing a ready-to-deploy output
+* Producing a deployment-ready output
 
-The system eliminates manual effort in website localisation and reconstruction.
+The result is a **fully localised static website** with zero manual effort.
 
 ---
 
@@ -21,16 +21,20 @@ The system eliminates manual effort in website localisation and reconstruction.
 
 The system follows a **two-agent pipeline**:
 
-```id="9m5wrp"
+```
 Input Website URL
         ↓
 Agent 1 — Cloning Engine
         ↓
 Static Website Output
         ↓
-Agent 2 — Localisation Engine
+Local Development Server (server.js)
         ↓
-Localised Website
+Agent 2 — Localisation Engine (n8n + LLM)
+        ↓
+Localised Website Output
+        ↓
+Deployment (Vercel)
 ```
 
 ---
@@ -39,7 +43,7 @@ Localised Website
 
 ### Purpose
 
-Reconstruct a dynamic website into a static HTML version.
+Convert dynamic websites into fully functional static HTML sites.
 
 ### Key Capabilities
 
@@ -52,12 +56,12 @@ Reconstruct a dynamic website into a static HTML version.
   * Images
   * Fonts
   * Videos
-* Removes all JavaScript bundles
-* Rebuilds UI components using lightweight logic:
+* Removes all JavaScript bundles and frameworks
+* Rebuilds UI components:
 
   * Navigation dropdowns
   * FAQ accordions
-* Generates a clean static website
+* Rewrites internal links and asset paths
 
 ### Tech Stack
 
@@ -79,9 +83,10 @@ Transform website content to match a target region using AI.
 
 1. Read HTML files
 2. Extract visible text nodes
-3. Send content to LLM
-4. Rewrite content for target region
-5. Inject updated text back into HTML
+3. Classify content (PROTECT / TRANSLATE)
+4. Send text to LLM
+5. Rewrite content for target region
+6. Inject updated text back into HTML
 
 ---
 
@@ -89,8 +94,8 @@ Transform website content to match a target region using AI.
 
 * Smart text classification:
 
-  * **PROTECT** → unchanged (brand names, numbers)
-  * **TRANSLATE** → rewritten content
+  * **PROTECT** → brand names, numbers, technical terms
+  * **TRANSLATE** → user-facing content
 * British English localisation:
 
   * ₹ → £
@@ -106,17 +111,63 @@ Transform website content to match a target region using AI.
 
 ---
 
+## 🧩 Local Development Server (Integration Layer)
+
+### Purpose
+
+A lightweight Node.js server (`server.js`) is used during development to support the localisation workflow.
+
+### Why it is needed
+
+During Agent 2 (n8n localisation pipeline):
+
+* HTML files need consistent access via URLs
+* Clean routing must be maintained (`/about` → `/about/index.html`)
+* Relative paths must resolve correctly
+* Browser-based rendering and testing must work properly
+
+The server ensures:
+
+* Stable file serving environment
+* Correct routing for nested pages
+* Smooth integration with n8n workflow
+
+---
+
+### Usage
+
+```bash
+node server.js
+```
+
+Then open:
+
+```
+http://localhost:3000
+```
+
+---
+
+### Important Notes
+
+* This server is used **only during development and processing**
+* It is **not required in production**
+* Final output is deployed as a static site (e.g., Vercel)
+
+---
+
 ## 🛡️ System Guarantees
 
 * Deterministic mapping of text nodes
 * Line count validation (prevents mismatch errors)
 * Structural preservation of HTML
+* No modification of DOM hierarchy
 
 ---
 
 ## 📂 Project Structure
 
-```id="d1akg9"
+```
 /agent-1-cloner
   cloner.js
   crawler.js
@@ -125,6 +176,8 @@ Transform website content to match a target region using AI.
   extraction-node.js
   injection-node.js
   prompt.txt
+
+/server.js
 ```
 
 ---
@@ -133,7 +186,7 @@ Transform website content to match a target region using AI.
 
 ### Step 1 — Run Cloning Engine
 
-```bash id="d9a5xk"
+```bash
 node cloner.js
 ```
 
@@ -141,7 +194,15 @@ node cloner.js
 
 ---
 
-### Step 2 — Run Localisation Pipeline
+### Step 2 — Start Local Server
+
+```bash
+node server.js
+```
+
+---
+
+### Step 3 — Run Localisation Pipeline
 
 * Import workflow into n8n
 * Execute localisation workflow
@@ -154,8 +215,8 @@ node cloner.js
 
 The system generates:
 
-* Fully static website
-* Localised content
+* Fully static HTML website
+* Localised content for target region
 * Deployment-ready files
 
 ---
@@ -181,7 +242,7 @@ The system generates:
 * Multi-country localisation support
 * Smart node classification
 * Parallel processing for faster execution
-* Automated validation of transformed content
+* Automated validation layer
 
 ---
 
